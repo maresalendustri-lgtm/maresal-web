@@ -16,6 +16,7 @@ export type Message = {
 
 export async function getMessages(): Promise<Message[]> {
   const supabase = createAdminSupabase();
+  if (!supabase) return [];
   const { data, error } = await supabase
     .from("messages")
     .select("*")
@@ -27,6 +28,7 @@ export async function getMessages(): Promise<Message[]> {
 
 export async function markMessageRead(id: string): Promise<void> {
   const supabase = createAdminSupabase();
+  if (!supabase) return;
   const { error } = await supabase
     .from("messages")
     .update({ read: true })
@@ -45,6 +47,7 @@ export async function createMessage(params: {
   message: string;
 }): Promise<void> {
   const supabase = createAdminSupabase();
+  if (!supabase) throw new Error("Supabase is not configured");
   const { error } = await supabase.from("messages").insert({
     name: params.name,
     email: params.email,

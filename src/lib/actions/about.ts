@@ -84,6 +84,7 @@ const DEFAULT_CONTENT: AboutContent = {
 
 export async function getAboutContent(): Promise<AboutContent> {
   const supabase = createAdminSupabase();
+  if (!supabase) return DEFAULT_CONTENT;
   const { data, error } = await supabase
     .from("about_content")
     .select("content")
@@ -102,6 +103,7 @@ export async function updateAboutContent(
   content: AboutContent
 ): Promise<void> {
   const supabase = createAdminSupabase();
+  if (!supabase) throw new Error("Supabase is not configured");
 
   const { error } = await supabase
     .from("about_content")
@@ -118,8 +120,7 @@ export async function updateAboutContent(
 
 const BUCKET = "site-content";
 
-async function ensureBucket() {
-  const supabase = createAdminSupabase();
+async function ensureBucket(supabase: NonNullable<ReturnType<typeof createAdminSupabase>>) {
   const { data } = await supabase.storage.getBucket(BUCKET);
   if (!data) {
     await supabase.storage.createBucket(BUCKET, {
@@ -141,7 +142,8 @@ export async function uploadAboutImage(formData: FormData): Promise<string> {
     throw new Error("Sadece JPEG, PNG, WebP ve GIF formatları desteklenir.");
 
   const supabase = createAdminSupabase();
-  await ensureBucket();
+  if (!supabase) throw new Error("Supabase is not configured");
+  await ensureBucket(supabase);
 
   const ext = file.name.split(".").pop() || "jpg";
   const fileName = `about/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;

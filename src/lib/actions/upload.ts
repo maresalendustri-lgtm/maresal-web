@@ -4,7 +4,7 @@ import { createAdminSupabase } from "@/lib/supabase/admin";
 
 const BUCKET = "services";
 
-async function ensureBucket(supabase: ReturnType<typeof createAdminSupabase>) {
+async function ensureBucket(supabase: NonNullable<ReturnType<typeof createAdminSupabase>>) {
   const { data } = await supabase.storage.getBucket(BUCKET);
   if (!data) {
     await supabase.storage.createBucket(BUCKET, {
@@ -32,6 +32,7 @@ export async function uploadServiceImage(formData: FormData): Promise<string> {
   }
 
   const supabase = createAdminSupabase();
+  if (!supabase) throw new Error("Supabase is not configured");
   await ensureBucket(supabase);
 
   const ext = file.name.split(".").pop() || "jpg";
@@ -58,6 +59,7 @@ export async function uploadServiceImage(formData: FormData): Promise<string> {
 
 export async function deleteServiceImage(url: string): Promise<void> {
   const supabase = createAdminSupabase();
+  if (!supabase) return;
 
   const bucketUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${BUCKET}/`;
   if (!url.startsWith(bucketUrl)) return;

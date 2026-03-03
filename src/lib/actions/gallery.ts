@@ -6,6 +6,7 @@ import type { GalleryImage } from "@/lib/gallery";
 
 export async function getGalleryImages(): Promise<GalleryImage[]> {
   const supabase = createAdminSupabase();
+  if (!supabase) return [];
   const { data, error } = await supabase
     .from("gallery_images")
     .select("url, alt, cat, span")
@@ -25,6 +26,7 @@ export async function saveGalleryImages(
   images: GalleryImage[]
 ): Promise<void> {
   const supabase = createAdminSupabase();
+  if (!supabase) throw new Error("Supabase is not configured");
 
   await supabase.from("gallery_images").delete().neq("id", "00000000-0000-0000-0000-000000000000");
 

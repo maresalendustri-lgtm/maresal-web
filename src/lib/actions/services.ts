@@ -6,6 +6,7 @@ import type { Service, ServiceInsert, ServiceUpdate } from "@/types/service";
 
 export async function getServices(): Promise<Service[]> {
   const supabase = createAdminSupabase();
+  if (!supabase) return [];
   const { data, error } = await supabase
     .from("services")
     .select("*")
@@ -17,6 +18,7 @@ export async function getServices(): Promise<Service[]> {
 
 export async function getActiveServices(): Promise<Service[]> {
   const supabase = createAdminSupabase();
+  if (!supabase) return [];
   const { data, error } = await supabase
     .from("services")
     .select("*")
@@ -29,6 +31,7 @@ export async function getActiveServices(): Promise<Service[]> {
 
 export async function getMainService(): Promise<Service | null> {
   const supabase = createAdminSupabase();
+  if (!supabase) return null;
   const { data, error } = await supabase
     .from("services")
     .select("*")
@@ -42,6 +45,7 @@ export async function getMainService(): Promise<Service | null> {
 
 export async function getRegularServices(): Promise<Service[]> {
   const supabase = createAdminSupabase();
+  if (!supabase) return [];
   const { data, error } = await supabase
     .from("services")
     .select("*")
@@ -57,6 +61,7 @@ export async function getServiceBySlug(
   slug: string
 ): Promise<Service | null> {
   const supabase = createAdminSupabase();
+  if (!supabase) return null;
   const { data, error } = await supabase
     .from("services")
     .select("*")
@@ -72,6 +77,7 @@ export async function createService(
   service: ServiceInsert
 ): Promise<Service> {
   const supabase = createAdminSupabase();
+  if (!supabase) throw new Error("Supabase is not configured");
   const { data, error } = await supabase
     .from("services")
     .insert(service)
@@ -90,6 +96,7 @@ export async function updateService(
   updates: ServiceUpdate
 ): Promise<Service> {
   const supabase = createAdminSupabase();
+  if (!supabase) throw new Error("Supabase is not configured");
   const { data, error } = await supabase
     .from("services")
     .update(updates)
@@ -107,6 +114,7 @@ export async function updateService(
 
 export async function deleteService(id: string): Promise<void> {
   const supabase = createAdminSupabase();
+  if (!supabase) throw new Error("Supabase is not configured");
   const { error } = await supabase.from("services").delete().eq("id", id);
 
   if (error) throw new Error(error.message);
@@ -120,6 +128,7 @@ export async function getRelatedServices(
   count = 3
 ): Promise<Service[]> {
   const supabase = createAdminSupabase();
+  if (!supabase) return [];
   const { data, error } = await supabase
     .from("services")
     .select("*")
@@ -137,6 +146,7 @@ export async function toggleServiceActive(
   isActive: boolean
 ): Promise<void> {
   const supabase = createAdminSupabase();
+  if (!supabase) throw new Error("Supabase is not configured");
   const { error } = await supabase
     .from("services")
     .update({ is_active: isActive })
